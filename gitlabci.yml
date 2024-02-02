@@ -1,0 +1,60 @@
+image:
+  name: "$CI_TEMPLATE_REGISTRY_HOST/gitlab-org/gitlab-build-images:terraform"
+  entrypoint: [""]
+  
+before_script:
+  - |
+    cat <<EOF >> ~/.terraformrc 
+    provider_installation {
+      network_mirror {
+        url     = "https://terraform-mirror.yandexcloud.net/"
+        include = ["registry.terraform.io/*/*"]
+      }
+      direct {
+        exclude = ["registry.terraform.io/*/*"]
+      }
+    }
+    EOF
+  - terraform init
+
+
+variables:
+  TF_VAR_nport:
+    description: "Type node port"
+  TF_VAR_cpu:
+    description: "Type limit of CPU, for example 0.5"
+  TF_VAR_memory:
+    description: "Type limit of memory, for example 512Mi"
+
+stages:
+  - validate
+  - plan
+  - apply
+  - destroy
+
+validate:
+  stage: validate
+  when: manual
+  script:
+    - terraform validate
+
+plan:
+  stage: plan
+  when: manual
+  script:
+    - terraform plan -out="planfile"
+  artifacts:
+    paths:
+      - planfile
+
+apply:
+  stage: apply
+  when: manual 
+  script:
+    - terraform apply -auto-approve "planfile"
+
+destroy:
+  stage: destroy
+  when: manual 
+  script:
+    - terraform destroy
