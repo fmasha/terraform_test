@@ -1,1 +1,6 @@
+[masha@masha2-test .kube]$ kubectl get services --all-namespaces
+NAMESPACE       NAME            TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)                  AGE
+app-namespace   nginx-service   NodePort    10.102.30.192   <none>        80:30201/TCP             3d
+default         kubernetes      ClusterIP   10.96.0.1       <none>        443/TCP                  4d21h
+kube-system     kube-dns        ClusterIP   10.96.0.10      <none>        53/UDP,53/TCP,9153/TCP   4d21h
 
